@@ -1,0 +1,15 @@
+#!/bin/zsh
+
+while getopts d: flag
+do
+  case "${flag}" in
+    d) day=${OPTARG};;
+    *) echo "Invalid flag"; exit;;
+  esac
+done
+# download input
+cargo aoc input -d "$day" -y "$(basename "$(find input -maxdepth 1 -type d)")"
+# create rust file
+touch src/day"$day".rs
+# add line to lib.rs
+sed -i "s/aoc_lib/pub mod day$day;\naoc_lib/" src/lib.rs
