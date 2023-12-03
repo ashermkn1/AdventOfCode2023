@@ -61,7 +61,7 @@ pub fn symbol_adjacent((num_str, (row, col)): (&str, Position), symbols: &HashSe
 
 #[aoc(day3, part1)]
 pub fn part1((nums, symbols): &Input) -> u32 {
-    nums.iter().filter(|&(num, (row, col))| symbol_adjeacent((num, (*row, *col)), symbols)).map(|(n, _)| n.parse::<u32>().unwrap()).sum()
+    nums.iter().filter(|&(num, (row, col))| symbol_adjacent((num, (*row, *col)), symbols)).map(|(n, _)| n.parse::<u32>().unwrap()).sum()
 }
 
 #[aoc(day3, part2)]
