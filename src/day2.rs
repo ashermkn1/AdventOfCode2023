@@ -4,7 +4,7 @@ use std::str::FromStr;
 pub struct CubeSet {
     red: u32,
     green: u32,
-    blue: u32
+    blue: u32,
 }
 
 impl CubeSet {
@@ -12,10 +12,11 @@ impl CubeSet {
         self.red * self.blue * self.green
     }
 }
+
 #[derive(Debug)]
 pub struct Game {
     id: u32,
-    cubes: Vec<CubeSet>
+    cubes: Vec<CubeSet>,
 }
 
 impl Game {
@@ -28,7 +29,7 @@ impl Game {
         CubeSet {
             red: self.cubes.iter().max_by_key(|c| c.red).unwrap().red,
             green: self.cubes.iter().max_by_key(|c| c.green).unwrap().green,
-            blue: self.cubes.iter().max_by_key(|c| c.blue).unwrap().blue
+            blue: self.cubes.iter().max_by_key(|c| c.blue).unwrap().blue,
         }
     }
 }
@@ -46,7 +47,7 @@ impl FromStr for Game {
                 let mut red = 0;
                 let mut blue = 0;
                 for p in set.split(", ") {
-                    let (num, color) = p.split_once(" ").unwrap();
+                    let (num, color) = p.split_once(' ').unwrap();
                     let num = num.parse::<u32>().unwrap();
                     match color {
                         "red" => red = num,
@@ -58,15 +59,16 @@ impl FromStr for Game {
                 CubeSet {
                     red,
                     green,
-                    blue
+                    blue,
                 }
             }).collect();
         Ok(Game {
             id,
-            cubes
+            cubes,
         })
     }
 }
+
 #[aoc_generator(day2)]
 pub fn parse_input(input: &str) -> Vec<Game> {
     input.lines().filter_map(|s| Game::from_str(s).ok()).collect()
@@ -77,7 +79,7 @@ pub fn part1(input: &[Game]) -> u32 {
     let set = CubeSet {
         red: 12,
         green: 13,
-        blue: 14
+        blue: 14,
     };
     input.iter().filter(|game| game.valid_set(set)).map(|game| game.id).sum()
 }
