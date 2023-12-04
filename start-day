@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 
 while getopts d: flag
 do
