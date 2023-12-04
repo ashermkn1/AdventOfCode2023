@@ -24,24 +24,6 @@ pub fn parse_input1(input: &str) -> Input {
     (numbers, symbols)
 }
 
-#[aoc_generator(day3, part2)]
-pub fn parse_input2(input: &str) -> Input {
-    let mut numbers = vec![];
-    let num_re = Regex::new(r"\d+").unwrap();
-
-    for (row, line) in input.lines().enumerate() {
-        for num in num_re.find_iter(line) {
-            numbers.push((num.as_str().to_owned(), (row, num.start())));
-        }
-    }
-
-    let symbols = HashSet::from_iter(input.lines().enumerate().flat_map(|(row, line)|
-        line.char_indices().filter(|&(_, c)| c == '*').map(move |(col, _)| (row, col))
-    ));
-
-    (numbers, symbols)
-}
-
 pub fn symbol_adjacent((num_str, (row, col)): (&str, Position), symbols: &HashSet<Position>) -> bool {
     let end_col = col + num_str.len() - 1;
     let mut neighbors = vec![
@@ -62,6 +44,24 @@ pub fn symbol_adjacent((num_str, (row, col)): (&str, Position), symbols: &HashSe
 #[aoc(day3, part1)]
 pub fn part1((nums, symbols): &Input) -> u32 {
     nums.iter().filter(|&(num, (row, col))| symbol_adjacent((num, (*row, *col)), symbols)).map(|(n, _)| n.parse::<u32>().unwrap()).sum()
+}
+
+#[aoc_generator(day3, part2)]
+pub fn parse_input2(input: &str) -> Input {
+    let mut numbers = vec![];
+    let num_re = Regex::new(r"\d+").unwrap();
+
+    for (row, line) in input.lines().enumerate() {
+        for num in num_re.find_iter(line) {
+            numbers.push((num.as_str().to_owned(), (row, num.start())));
+        }
+    }
+
+    let symbols = HashSet::from_iter(input.lines().enumerate().flat_map(|(row, line)|
+        line.char_indices().filter(|&(_, c)| c == '*').map(move |(col, _)| (row, col))
+    ));
+
+    (numbers, symbols)
 }
 
 #[aoc(day3, part2)]
