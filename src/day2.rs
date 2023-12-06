@@ -41,7 +41,8 @@ impl FromStr for Game {
         let (id, rest) = s.strip_prefix("Game ").unwrap().split_once(": ").unwrap();
         let id = id.parse::<u32>().unwrap();
 
-        let cubes = rest.split("; ")
+        let cubes = rest
+            .split("; ")
             .map(|set| {
                 let mut green = 0;
                 let mut red = 0;
@@ -53,25 +54,22 @@ impl FromStr for Game {
                         "red" => red = num,
                         "green" => green = num,
                         "blue" => blue = num,
-                        _ => unreachable!()
+                        _ => unreachable!(),
                     }
                 }
-                CubeSet {
-                    red,
-                    green,
-                    blue,
-                }
-            }).collect();
-        Ok(Game {
-            id,
-            cubes,
-        })
+                CubeSet { red, green, blue }
+            })
+            .collect();
+        Ok(Game { id, cubes })
     }
 }
 
 #[aoc_generator(day2)]
 pub fn parse_input(input: &str) -> Vec<Game> {
-    input.lines().filter_map(|s| Game::from_str(s).ok()).collect()
+    input
+        .lines()
+        .filter_map(|s| Game::from_str(s).ok())
+        .collect()
 }
 
 #[aoc(day2, part1)]
@@ -81,7 +79,11 @@ pub fn part1(input: &[Game]) -> u32 {
         green: 13,
         blue: 14,
     };
-    input.iter().filter(|game| game.valid_set(set)).map(|game| game.id).sum()
+    input
+        .iter()
+        .filter(|game| game.valid_set(set))
+        .map(|game| game.id)
+        .sum()
 }
 
 #[aoc(day2, part2)]

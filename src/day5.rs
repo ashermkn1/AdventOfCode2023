@@ -1,17 +1,16 @@
-use std::collections::BTreeSet;
-use std::str::FromStr;
 use itertools::Itertools;
+use std::collections::BTreeSet;
 
 #[derive(Debug, PartialEq)]
 pub struct MapEntry {
     dest_start: u64,
     source_start: u64,
-    len: u64
+    len: u64,
 }
 
 impl MapEntry {
     pub fn convert(&self, value: u64) -> Option<u64> {
-        if self.source_start <= value && value < self.source_start + self.len  {
+        if self.source_start <= value && value < self.source_start + self.len {
             Some(value - self.source_start + self.dest_start)
         } else {
             None
@@ -53,16 +52,22 @@ impl Map {
             }
         });
         slices.insert(range_end);
-        slices.iter().fold((Vec::new(), range_start), |(mut ranges, current): (Vec<Range>, u64), pos| {
-            ranges.push((self.convert(current), pos - current));
-            (ranges, *pos)
-        }).0
+        slices
+            .iter()
+            .fold(
+                (Vec::new(), range_start),
+                |(mut ranges, current): (Vec<Range>, u64), pos| {
+                    ranges.push((self.convert(current), pos - current));
+                    (ranges, *pos)
+                },
+            )
+            .0
     }
 }
 #[derive(Debug, PartialEq)]
 pub struct Almanac {
     seeds: Vec<u64>,
-    maps: Vec<Map>
+    maps: Vec<Map>,
 }
 
 impl Almanac {
@@ -76,21 +81,32 @@ impl Almanac {
 }
 
 fn parse_seeds(input: &str) -> Vec<u64> {
-    input.strip_prefix("seeds: ").unwrap()
-        .split_ascii_whitespace().filter_map(|s| s.parse().ok())
+    input
+        .strip_prefix("seeds: ")
+        .unwrap()
+        .split_ascii_whitespace()
+        .filter_map(|s| s.parse().ok())
         .collect()
 }
 
 fn parse_map(input: &str) -> Map {
-    let entries = input.lines().skip(1).map(|line| {
-        let (dest_start, source_start, len) = line.split_ascii_whitespace().filter_map(|s| s.parse().ok()).collect_tuple().unwrap();
+    let entries = input
+        .lines()
+        .skip(1)
+        .map(|line| {
+            let (dest_start, source_start, len) = line
+                .split_ascii_whitespace()
+                .filter_map(|s| s.parse().ok())
+                .collect_tuple()
+                .unwrap();
 
-        MapEntry {
-            dest_start,
-            source_start,
-            len
-        }
-    }).collect();
+            MapEntry {
+                dest_start,
+                source_start,
+                len,
+            }
+        })
+        .collect();
 
     Map(entries)
 }
@@ -102,12 +118,17 @@ pub fn parse_input(input: &str) -> Almanac {
 
     let maps = blocks.map(parse_map).collect();
 
-    Almanac {seeds, maps}
+    Almanac { seeds, maps }
 }
 
 #[aoc(day5, part1)]
 pub fn part1(input: &Almanac) -> u64 {
-    input.seeds.iter().map(|&seed| input.seed_to_location(seed)).min().unwrap()
+    input
+        .seeds
+        .iter()
+        .map(|&seed| input.seed_to_location(seed))
+        .min()
+        .unwrap()
 }
 
 #[aoc(day5, part2)]
