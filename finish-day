@@ -8,5 +8,6 @@ do
   esac
 done
 
+rustfmt "src/day$day.rs"
 git add --all
 git commit -m "day$day"
