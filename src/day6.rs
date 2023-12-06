@@ -39,8 +39,8 @@ pub fn part1(_: &str) -> u64 {
 #[aoc(day6, part2)]
 pub fn part2(_: &str) -> u64 {
     Race {
-        time: 48989083,
-        record: 390110311121360,
+        time: 48_989_083,
+        record: 390_110_311_121_360,
     }
     .num_wins()
 }

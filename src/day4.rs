@@ -16,15 +16,16 @@ pub fn parse_input(input: &str) -> Vec<Card> {
 
             let (winning, rest) = nums.split_once('|').unwrap();
 
-            let winning: HashSet<u32> = HashSet::from_iter(
+            let winning: HashSet<u32> =
                 winning
                     .split_ascii_whitespace()
-                    .map(|num| num.parse::<u32>().unwrap()),
-            );
-            let rest = HashSet::from_iter(
-                rest.split_ascii_whitespace()
-                    .map(|num| num.parse::<u32>().unwrap()),
-            );
+                    .map(|num| num.parse::<u32>().unwrap())
+            .collect::<HashSet<_>>();
+
+            let rest = rest
+                .split_ascii_whitespace()
+                .map(|num| num.parse::<u32>().unwrap())
+                .collect::<HashSet<_>>();
 
             let matches = winning.intersection(&rest);
             Card {
@@ -52,9 +53,9 @@ pub fn part1(input: &[Card]) -> u32 {
 #[aoc(day4, part2)]
 pub fn part2(input: &[Card]) -> u32 {
     let card_map: HashMap<u32, u32> =
-        HashMap::from_iter(input.iter().map(|card| (card.id, card.matches)));
+        input.iter().map(|card| (card.id, card.matches)).collect::<HashMap<_, _>>();
     let mut card_counts: HashMap<u32, u32> =
-        HashMap::from_iter(input.iter().map(|card| (card.id, 1)));
+        input.iter().map(|card| (card.id, 1)).collect::<HashMap<_, _>>();
 
     for (id, num) in card_map.iter().sorted_by_key(|(id, _)| *id) {
         let copies = card_counts[id];

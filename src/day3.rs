@@ -17,11 +17,11 @@ pub fn parse_input1(input: &str) -> Input {
         }
     }
 
-    let symbols = HashSet::from_iter(input.lines().enumerate().flat_map(|(row, line)| {
+    let symbols = input.lines().enumerate().flat_map(|(row, line)| {
         line.char_indices()
             .filter(|&(_, c)| !c.is_ascii_digit() && c != '.')
             .map(move |(col, _)| (row, col))
-    }));
+    }).collect::<HashSet<_, _>>();
 
     (numbers, symbols)
 }
@@ -65,11 +65,11 @@ pub fn parse_input2(input: &str) -> Input {
         }
     }
 
-    let symbols = HashSet::from_iter(input.lines().enumerate().flat_map(|(row, line)| {
+    let symbols = input.lines().enumerate().flat_map(|(row, line)| {
         line.char_indices()
             .filter(|&(_, c)| c == '*')
             .map(move |(col, _)| (row, col))
-    }));
+    }).collect::<HashSet<_, _>>();
 
     (numbers, symbols)
 }
@@ -77,7 +77,7 @@ pub fn parse_input2(input: &str) -> Input {
 #[aoc(day3, part2)]
 pub fn part2((nums, gears): &Input) -> u32 {
     let mut ratios: Vec<u32> = vec![];
-    for &(grow, gcol) in gears.iter() {
+    for &(grow, gcol) in gears {
         let neighbors = [
             (grow.saturating_sub(1), gcol.saturating_sub(1)),
             (grow.saturating_sub(1), gcol),
@@ -101,7 +101,7 @@ pub fn part2((nums, gears): &Input) -> u32 {
             .collect_vec();
 
         if adjacent_nums.len() == 2 {
-            ratios.push(adjacent_nums.iter().product())
+            ratios.push(adjacent_nums.iter().product());
         }
     }
 
