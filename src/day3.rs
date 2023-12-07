@@ -2,12 +2,12 @@ use itertools::Itertools;
 use regex::Regex;
 use std::collections::HashSet;
 
-pub type Position = (usize, usize);
+type Position = (usize, usize);
 
-pub type Input = (Vec<(String, Position)>, HashSet<Position>);
+type Input = (Vec<(String, Position)>, HashSet<Position>);
 
 #[aoc_generator(day3, part1)]
-pub fn parse_input1(input: &str) -> Input {
+fn parse_input1(input: &str) -> Input {
     let mut numbers = vec![];
     let num_re = Regex::new(r"\d+").unwrap();
 
@@ -26,7 +26,7 @@ pub fn parse_input1(input: &str) -> Input {
     (numbers, symbols)
 }
 
-pub fn symbol_adjacent(
+fn symbol_adjacent(
     (num_str, (row, col)): (&str, Position),
     symbols: &HashSet<Position>,
 ) -> bool {
@@ -47,7 +47,7 @@ pub fn symbol_adjacent(
 }
 
 #[aoc(day3, part1)]
-pub fn part1((nums, symbols): &Input) -> u32 {
+fn part1((nums, symbols): &Input) -> u32 {
     nums.iter()
         .filter(|&(num, (row, col))| symbol_adjacent((num, (*row, *col)), symbols))
         .map(|(n, _)| n.parse::<u32>().unwrap())
@@ -55,7 +55,7 @@ pub fn part1((nums, symbols): &Input) -> u32 {
 }
 
 #[aoc_generator(day3, part2)]
-pub fn parse_input2(input: &str) -> Input {
+fn parse_input2(input: &str) -> Input {
     let mut numbers = vec![];
     let num_re = Regex::new(r"\d+").unwrap();
 
@@ -75,7 +75,7 @@ pub fn parse_input2(input: &str) -> Input {
 }
 
 #[aoc(day3, part2)]
-pub fn part2((nums, gears): &Input) -> u32 {
+fn part2((nums, gears): &Input) -> u32 {
     let mut ratios: Vec<u32> = vec![];
     for &(grow, gcol) in gears {
         let neighbors = [

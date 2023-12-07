@@ -1,11 +1,11 @@
 #[derive(Debug, PartialOrd, PartialEq)]
-pub struct Race {
+struct Race {
     time: u64,
     record: u64,
 }
 
 impl Race {
-    pub fn num_wins(&self) -> u64 {
+    fn num_wins(&self) -> u64 {
         (0..self.time)
             .map(|time| time * (self.time - time))
             .filter(|&dist| dist > self.record)
@@ -32,12 +32,12 @@ static RACES: [Race; 4] = [
 ];
 
 #[aoc(day6, part1)]
-pub fn part1(_: &str) -> u64 {
+fn part1(_: &str) -> u64 {
     RACES.iter().map(Race::num_wins).product()
 }
 
 #[aoc(day6, part2)]
-pub fn part2(_: &str) -> u64 {
+fn part2(_: &str) -> u64 {
     Race {
         time: 48_989_083,
         record: 390_110_311_121_360,

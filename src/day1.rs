@@ -1,5 +1,5 @@
 #[aoc(day1, part1)]
-pub fn part1(input: &str) -> u32 {
+fn part1(input: &str) -> u32 {
     let input: Vec<&str> = input.lines().collect();
     let mut sum = 0;
     for line in input {
@@ -13,7 +13,7 @@ pub fn part1(input: &str) -> u32 {
 }
 
 #[aoc(day1, part2)]
-pub fn part2(input: &str) -> u32 {
+fn part2(input: &str) -> u32 {
     input
         .lines()
         .filter(|line| !line.is_empty())

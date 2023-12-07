@@ -2,14 +2,14 @@ use itertools::Itertools;
 use std::collections::BTreeSet;
 
 #[derive(Debug, PartialEq)]
-pub struct MapEntry {
+struct MapEntry {
     dest_start: u64,
     source_start: u64,
     len: u64,
 }
 
 impl MapEntry {
-    pub fn convert(&self, value: u64) -> Option<u64> {
+    fn convert(&self, value: u64) -> Option<u64> {
         if self.source_start <= value && value < self.source_start + self.len {
             Some(value - self.source_start + self.dest_start)
         } else {
@@ -19,11 +19,11 @@ impl MapEntry {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct Map(Vec<MapEntry>);
+struct Map(Vec<MapEntry>);
 
 type Range = (u64, u64);
 impl Map {
-    pub fn convert(&self, value: u64) -> u64 {
+    fn convert(&self, value: u64) -> u64 {
         if let Some(dest) = self.0.iter().find_map(|entry| entry.convert(value)) {
             dest
         } else {
@@ -31,7 +31,7 @@ impl Map {
         }
     }
 
-    pub fn convert_range(&self, (range_start, range_len): Range) -> Vec<Range> {
+    fn convert_range(&self, (range_start, range_len): Range) -> Vec<Range> {
         let range_end = range_start + range_len;
         let mut slices = self.0.iter().fold(BTreeSet::new(), |mut set, entry| {
             let source_start = entry.source_start;
@@ -65,17 +65,17 @@ impl Map {
     }
 }
 #[derive(Debug, PartialEq)]
-pub struct Almanac {
+struct Almanac {
     seeds: Vec<u64>,
     maps: Vec<Map>,
 }
 
 impl Almanac {
-    pub fn seed_to_location(&self, seed: u64) -> u64 {
+    fn seed_to_location(&self, seed: u64) -> u64 {
         self.maps.iter().fold(seed, |val, map| map.convert(val))
     }
 
-    pub fn seed_ranges(&self) -> Vec<Range> {
+    fn seed_ranges(&self) -> Vec<Range> {
         self.seeds.iter().copied().tuples::<(_, _)>().collect()
     }
 }
@@ -112,7 +112,7 @@ fn parse_map(input: &str) -> Map {
 }
 
 #[aoc_generator(day5)]
-pub fn parse_input(input: &str) -> Almanac {
+fn parse_input(input: &str) -> Almanac {
     let mut blocks = input.split("\n\n");
     let seeds = parse_seeds(blocks.next().unwrap());
 
@@ -122,7 +122,7 @@ pub fn parse_input(input: &str) -> Almanac {
 }
 
 #[aoc(day5, part1)]
-pub fn part1(input: &Almanac) -> u64 {
+fn part1(input: &Almanac) -> u64 {
     input
         .seeds
         .iter()
@@ -132,7 +132,7 @@ pub fn part1(input: &Almanac) -> u64 {
 }
 
 #[aoc(day5, part2)]
-pub fn part2(input: &Almanac) -> u64 {
+fn part2(input: &Almanac) -> u64 {
     let mut ranges = input.seed_ranges();
     let mut next = Vec::new();
 

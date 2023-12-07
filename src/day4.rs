@@ -1,13 +1,13 @@
 use itertools::Itertools;
 use std::collections::{HashMap, HashSet};
 
-pub struct Card {
+struct Card {
     id: u32,
     matches: u32,
 }
 
 #[aoc_generator(day4)]
-pub fn parse_input(input: &str) -> Vec<Card> {
+fn parse_input(input: &str) -> Vec<Card> {
     input
         .lines()
         .map(|line| {
@@ -37,7 +37,7 @@ pub fn parse_input(input: &str) -> Vec<Card> {
 }
 
 #[aoc(day4, part1)]
-pub fn part1(input: &[Card]) -> u32 {
+fn part1(input: &[Card]) -> u32 {
     input
         .iter()
         .map(|card| {
@@ -51,7 +51,7 @@ pub fn part1(input: &[Card]) -> u32 {
 }
 
 #[aoc(day4, part2)]
-pub fn part2(input: &[Card]) -> u32 {
+fn part2(input: &[Card]) -> u32 {
     let card_map: HashMap<u32, u32> =
         input.iter().map(|card| (card.id, card.matches)).collect::<HashMap<_, _>>();
     let mut card_counts: HashMap<u32, u32> =

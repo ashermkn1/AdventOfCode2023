@@ -1,31 +1,31 @@
 use std::str::FromStr;
 
 #[derive(Debug, Copy, Clone, Ord, PartialOrd, Eq, PartialEq)]
-pub struct CubeSet {
+struct CubeSet {
     red: u32,
     green: u32,
     blue: u32,
 }
 
 impl CubeSet {
-    pub fn power(&self) -> u32 {
+    fn power(&self) -> u32 {
         self.red * self.blue * self.green
     }
 }
 
 #[derive(Debug)]
-pub struct Game {
+struct Game {
     id: u32,
     cubes: Vec<CubeSet>,
 }
 
 impl Game {
-    pub fn valid_set(&self, set: CubeSet) -> bool {
+    fn valid_set(&self, set: CubeSet) -> bool {
         self.cubes.iter().max_by_key(|c| c.red).unwrap().red <= set.red
             && self.cubes.iter().max_by_key(|c| c.blue).unwrap().blue <= set.blue
             && self.cubes.iter().max_by_key(|c| c.green).unwrap().green <= set.green
     }
-    pub fn minimum_set(&self) -> CubeSet {
+    fn minimum_set(&self) -> CubeSet {
         CubeSet {
             red: self.cubes.iter().max_by_key(|c| c.red).unwrap().red,
             green: self.cubes.iter().max_by_key(|c| c.green).unwrap().green,
@@ -65,7 +65,7 @@ impl FromStr for Game {
 }
 
 #[aoc_generator(day2)]
-pub fn parse_input(input: &str) -> Vec<Game> {
+fn parse_input(input: &str) -> Vec<Game> {
     input
         .lines()
         .filter_map(|s| Game::from_str(s).ok())
@@ -73,7 +73,7 @@ pub fn parse_input(input: &str) -> Vec<Game> {
 }
 
 #[aoc(day2, part1)]
-pub fn part1(input: &[Game]) -> u32 {
+fn part1(input: &[Game]) -> u32 {
     let set = CubeSet {
         red: 12,
         green: 13,
@@ -87,6 +87,6 @@ pub fn part1(input: &[Game]) -> u32 {
 }
 
 #[aoc(day2, part2)]
-pub fn part2(input: &[Game]) -> u32 {
+fn part2(input: &[Game]) -> u32 {
     input.iter().map(|game| game.minimum_set().power()).sum()
 }
