@@ -12,21 +12,21 @@ cargo aoc input -d "$day" -y "$(basename "$(find input -maxdepth 1 -type d)")"
 # create rust file
 cat >"src/day$day.rs" << EOF
 #[aoc_generator(day$day)]
-pub fn parse_input(input: &str) -> Vec<String> {
+fn parse_input(input: &str) -> Vec<String> {
   input.lines().map(str::to_owned).collect()
 }
 
 #[aoc(day$day, part1)]
-pub fn part1(input: &[String]) {
+fn part1(input: &[String]) {
   todo!()
 }
 
 #[aoc(day$day, part2)]
-pub fn part2(input: &[String]) {
+fn part2(input: &[String]) {
   todo!()
 }
 
 EOF
 touch src/day"$day".rs
 # add line to lib.rs
-sed -i "s/aoc_lib/pub mod day$day;\naoc_lib/" src/lib.rs
+sed -i "s/aoc_lib/mod day$day;\naoc_lib/" src/lib.rs

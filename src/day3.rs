@@ -17,19 +17,20 @@ fn parse_input1(input: &str) -> Input {
         }
     }
 
-    let symbols = input.lines().enumerate().flat_map(|(row, line)| {
-        line.char_indices()
-            .filter(|&(_, c)| !c.is_ascii_digit() && c != '.')
-            .map(move |(col, _)| (row, col))
-    }).collect::<HashSet<_, _>>();
+    let symbols = input
+        .lines()
+        .enumerate()
+        .flat_map(|(row, line)| {
+            line.char_indices()
+                .filter(|&(_, c)| !c.is_ascii_digit() && c != '.')
+                .map(move |(col, _)| (row, col))
+        })
+        .collect::<HashSet<_, _>>();
 
     (numbers, symbols)
 }
 
-fn symbol_adjacent(
-    (num_str, (row, col)): (&str, Position),
-    symbols: &HashSet<Position>,
-) -> bool {
+fn symbol_adjacent((num_str, (row, col)): (&str, Position), symbols: &HashSet<Position>) -> bool {
     let end_col = col + num_str.len() - 1;
     let mut neighbors = vec![
         (row.saturating_sub(1), col.saturating_sub(1)),
@@ -65,11 +66,15 @@ fn parse_input2(input: &str) -> Input {
         }
     }
 
-    let symbols = input.lines().enumerate().flat_map(|(row, line)| {
-        line.char_indices()
-            .filter(|&(_, c)| c == '*')
-            .map(move |(col, _)| (row, col))
-    }).collect::<HashSet<_, _>>();
+    let symbols = input
+        .lines()
+        .enumerate()
+        .flat_map(|(row, line)| {
+            line.char_indices()
+                .filter(|&(_, c)| c == '*')
+                .map(move |(col, _)| (row, col))
+        })
+        .collect::<HashSet<_, _>>();
 
     (numbers, symbols)
 }
