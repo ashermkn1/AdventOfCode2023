@@ -24,7 +24,7 @@ fn parse_input(input: &str) -> Cosmos {
         .flat_map(|(i, row)| {
             row.iter()
                 .enumerate()
-                .filter(|&(j, cell)| *cell == '#')
+                .filter(|&(_, cell)| *cell == '#')
                 .map(move |(j, _)| (i, j))
         })
         .collect();
@@ -47,21 +47,21 @@ fn distances(input: &Cosmos, big: bool) -> usize {
         .iter()
         .tuple_combinations()
         .map(|(&(i1, j1), &(i2, j2))| {
-            let (starti, endi) = minmax(i1, i2);
-            let (startj, endj) = minmax(j1, j2);
-            let idist = (endi - starti)
-                + (starti..endi)
+            let (start_row, end_row) = minmax(i1, i2);
+            let (start_col, end_col) = minmax(j1, j2);
+            let vert_dist = (end_row - start_row)
+                + (start_row..end_row)
                     .collect::<BTreeSet<_>>()
                     .intersection(&input.empty_rows)
                     .count()
                     * mult;
-            let jdist = (endj - startj)
-                + (startj..endj)
+            let horiz_dist = (end_col - start_col)
+                + (start_col..end_col)
                     .collect::<BTreeSet<_>>()
                     .intersection(&input.empty_cols)
                     .count()
                     * mult;
-            idist + jdist
+            vert_dist + horiz_dist
         })
         .sum()
 }
