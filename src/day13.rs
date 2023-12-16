@@ -55,7 +55,6 @@ fn reflect_smudge(image: &[u32]) -> usize {
             if image[low] == image[high] {
                 continue;
             }
-
             if !found_smudge && one_bit_diff(image[low], image[high]) {
                 found_smudge = true;
             } else {
