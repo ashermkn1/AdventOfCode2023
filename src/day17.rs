@@ -1,4 +1,3 @@
-use std::cmp::Reverse;
 use std::collections::{BinaryHeap, HashMap};
 
 fn dijkstras(grid: &[Vec<u32>], minstep: isize, maxstep: isize) -> i64 {
