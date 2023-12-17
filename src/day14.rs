@@ -1,4 +1,4 @@
-use hashbrown::HashMap;
+use std::collections::HashMap;
 type Grid = Vec<Vec<char>>;
 #[aoc_generator(day14)]
 fn parse_input(input: &str) -> Grid {
