@@ -1,139 +1,109 @@
-use crate::day18::Direction::*;
 use itertools::Itertools;
-
+use std::ops::{Add, Mul};
 #[derive(Debug, Copy, Clone)]
-enum Direction {
-    Right(u64),
-    Up(u64),
-    Down(u64),
-    Left(u64),
+struct Point {
+    x: i64,
+    y: i64,
 }
 
-impl Direction {
-    fn from_char(dir: char, size: u64) -> Self {
-        (match dir {
-            'R' => Right,
-            'U' => Up,
-            'D' => Down,
-            'L' => Left,
-            _ => unreachable!("malformed direction"),
-        })(size)
+impl Point {
+    fn origin() -> Self {
+        Self::new(0, 0)
+    }
+    fn new(x: i64, y: i64) -> Self {
+        Self { x, y }
+    }
+    fn from_direction(dir: char) -> Self {
+        match dir {
+            '0' | 'R' => Self::new(1, 0),
+            '1' | 'D' => Self::new(0, -1),
+            '2' | 'L' => Self::new(-1, 0),
+            '3' | 'U' => Self::new(0, 1),
+            _ => unreachable!("Malformed input"),
+        }
     }
 }
-struct Trench {
-    edges: Vec<((i64, i64), Direction, u32)>,
-}
 
-impl Trench {
-    fn get_lava_capacity(&self) -> u64 {
-        let mut vertices: Vec<_> = self.edges.iter().copied().map(|(pos, _, _)| pos).collect();
-        vertices.push((0, 0));
-        let area = vertices
-            .into_iter()
-            .tuple_windows()
-            .fold(0, |acc, ((x0, y0), (x1, y1))| acc + (x0 * y1 - x1 * y0));
-        let area = (area / 2).abs_diff(0);
+impl Add for Point {
+    type Output = Self;
 
-        let boundary: u64 = self
-            .edges
-            .iter()
-            .copied()
-            .map(|(_, dir, _)| match dir {
-                Right(x) | Down(x) | Up(x) | Left(x) => x,
-            })
-            .sum();
-        area + (boundary / 2) + 1
+    fn add(self, rhs: Self) -> Self::Output {
+        Self::Output {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+        }
     }
 }
-#[aoc_generator(day18, part1)]
-fn parse_trench(input: &str) -> Trench {
-    let (mut row, mut col) = (0i64, 0i64);
-    let edges = input
+impl Mul<i64> for Point {
+    type Output = Self;
+
+    fn mul(self, rhs: i64) -> Self::Output {
+        Self::Output {
+            x: self.x * rhs,
+            y: self.y * rhs,
+        }
+    }
+}
+#[aoc_generator(day18)]
+fn parse_input(input: &str) -> Vec<(char, i64, String)> {
+    input
         .lines()
         .map(|line| {
             let (dir, size, color) = line
                 .split_ascii_whitespace()
                 .collect_tuple()
                 .expect("malformed input");
-            let trimmed_color = color
-                .strip_prefix("(#")
-                .map(|s| s.strip_suffix(')').unwrap())
-                .unwrap();
-            let hex_color = u32::from_str_radix(trimmed_color, 16).unwrap();
-            let dir = Direction::from_char(dir.chars().next().unwrap(), size.parse().unwrap());
-            let res = ((row, col), dir, hex_color);
-            match dir {
-                Right(dx) => {
-                    col += dx as i64;
-                }
-                Up(dy) => {
-                    row = row.saturating_sub(dy as i64);
-                }
-                Down(dy) => {
-                    row += dy as i64;
-                }
-                Left(dx) => {
-                    col = col.saturating_sub(dx as i64);
-                }
-            };
+
+            let dir = dir.chars().next().unwrap();
+            let size = size.parse::<i64>().unwrap();
+            let color = color.strip_prefix("(#").unwrap().strip_suffix(')').unwrap();
+
+            (dir, size, color.to_owned())
+        })
+        .collect()
+}
+
+fn get_capacity(dig_plan: Vec<Point>) -> i64 {
+    let corners: Vec<_> = dig_plan
+        .iter()
+        .scan(Point::origin(), |state, &point| {
+            let res = Some(state.add(point));
+            *state = state.add(point);
             res
         })
         .collect();
-    Trench { edges: dbg!(edges) }
-}
 
+    let perimeter = dig_plan
+        .into_iter()
+        .fold(0, |acc, point| acc + point.x.abs() + point.y.abs());
+
+    let area = corners.into_iter().tuple_windows().fold(
+        0,
+        |acc, (Point { x: x0, y: y0 }, Point { x: x1, y: y1 })| acc + (x0 * y1 - x1 * y0),
+    );
+
+    let area = (area / 2).abs();
+    area + (perimeter / 2) + 1
+}
 #[aoc(day18, part1)]
-fn part1(input: &Trench) -> u64 {
-    input.get_lava_capacity()
-}
-
-#[aoc_generator(day18, part2)]
-fn parse_color_trench(input: &str) -> Trench {
-    let (mut row, mut col) = (0i64, 0i64);
-    let edges = input
-        .lines()
-        .map(|line| {
-            let (_, _, color) = line
-                .split_ascii_whitespace()
-                .collect_tuple()
-                .expect("malformed input");
-            let color = color
-                .strip_prefix("(#")
-                .map(|s| s.strip_suffix(')').unwrap())
-                .unwrap();
-
-            let (size, dir) = color.split_at(color.len() - 1);
-            let size = u64::from_str_radix(size, 16).unwrap();
-            let dir = match dir.chars().next().unwrap() {
-                '0' => 'R',
-                '1' => 'D',
-                '2' => 'L',
-                '3' => 'U',
-                _ => unreachable!(),
-            };
-            let dir = Direction::from_char(dir, size);
-            let res = ((row, col), dir, 0);
-            match dir {
-                Right(dx) => {
-                    col += dx as i64;
-                }
-                Up(dy) => {
-                    row = row.saturating_sub(dy as i64);
-                }
-                Down(dy) => {
-                    row += dy as i64;
-                }
-                Left(dx) => {
-                    col = col.saturating_sub(dx as i64);
-                }
-            };
-            res
-        })
+fn part1(input: &[(char, i64, String)]) -> i64 {
+    let dig_plan: Vec<_> = input
+        .iter()
+        .map(|&(dir, size, _)| Point::from_direction(dir) * size)
         .collect();
-    Trench { edges }
+    get_capacity(dig_plan)
 }
 
 #[aoc(day18, part2)]
-fn part2(input: &Trench) -> u64 {
-    input.get_lava_capacity()
+fn part2(input: &[(char, i64, String)]) -> i64 {
+    let dig_plan: Vec<_> = input
+        .iter()
+        .map(|(_, _, color)| {
+            let color = color.clone();
+            let (size, dir) = color.split_at(color.len() - 1);
+            Point::from_direction(dir.chars().next().unwrap())
+                * i64::from_str_radix(size, 16).unwrap()
+        })
+        .collect();
+    get_capacity(dig_plan)
 }
